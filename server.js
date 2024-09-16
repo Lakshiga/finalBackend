@@ -5,8 +5,9 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const connectDB = require('./config/db'); // Importing the db connection
 const userRoutes = require('./routes/auth'); // Importing user authentication routes
-const matchRoutes = require('./routes/matches'); // Importing match routes
-const eventRoutes = require('./routes/events');
+const matchRoutes = require('./routes/matches'); // Importing match-related routes
+const eventRoutes = require('./routes/events'); // Importing event routes
+const adminRoutes = require('./routes/admin'); // Importing admin routes
 
 const app = express();
 
@@ -21,7 +22,8 @@ connectDB();
 // API Routes
 app.use('/api/users', userRoutes); // API route for user-related operations
 app.use('/api/matches', matchRoutes); // API route for match-related operations
-app.use('/api/events', eventRoutes); // New event routes
+app.use('/api/events', eventRoutes); // API route for event-related operations
+app.use('/api/admin', adminRoutes); // API route for admin-related operations
 
 // Serve static assets in production
 if (process.env.NODE_ENV === 'production') {
