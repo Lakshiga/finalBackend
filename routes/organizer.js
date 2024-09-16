@@ -6,7 +6,7 @@ const {
   deleteMatch,
   verifyUmpire,
   getMatchesByOrganizer,
-} = require('../controllers/organizerController');
+} = require('../controllers/OrganizerController');
 const authMiddleware = require('../middleware/authMiddleware');
 const roleAuth = require('../middleware/roleAuth');
 

@@ -1,4 +1,4 @@
-const Organizer = require('../models/organizer');
+const Organizer = require('../models/Organizer');
 const Umpire = require('../models/Umpire');
 const Match = require('../models/Match');
 
