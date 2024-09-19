@@ -1,14 +1,43 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 
-const MatchSchema = new Schema({
-  name: { type: String, required: true },
-  type: { type: String, required: true },
-  players: [{ type: String, required: true }],
-  score: { type: Map, of: String }, // Storing score as a map (e.g., { player1: '3', player2: '2' })
-  umpire: { type: String },
-  event: { type: mongoose.Schema.Types.ObjectId, ref: 'Event' },
-  createdAt: { type: Date, default: Date.now },
+const MatchSchema = new mongoose.Schema({
+  player1: {
+    type: String,
+    required: true,
+  },
+  player2: {
+    type: String,
+    required: true,
+  },
+  organizer: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User', // Reference to the organizer
+    required: true,
+  },
+  umpire: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User', // Reference to the umpire
+    required: true,
+  },
+  score: {
+    player1Score: {
+      type: Number,
+      default: 0,
+    },
+    player2Score: {
+      type: Number,
+      default: 0,
+    },
+  },
+  status: {
+    type: String,
+    enum: ['Pending', 'Ongoing', 'Finished'],
+    default: 'Pending',
+  },
+  date: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 module.exports = mongoose.model('Match', MatchSchema);

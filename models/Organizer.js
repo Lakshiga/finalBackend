@@ -4,33 +4,32 @@ const OrganizerSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    trim: true,
   },
   email: {
     type: String,
     required: true,
     unique: true,
-    trim: true,
   },
   password: {
     type: String,
     required: true,
   },
-  role: {
+  organizationName: {
     type: String,
     required: true,
-    default: 'organizer',
+  },
+  organizationID: {
+    type: String,
+    required: true,
   },
   verified: {
     type: Boolean,
-    default: false,
+    default: false,  // Organizer is not verified by default
   },
-  createdAt: {
+  date: {
     type: Date,
     default: Date.now,
   },
 });
 
-const Organizer = mongoose.model('Organizer', OrganizerSchema);
-
-module.exports = Organizer;
+module.exports = mongoose.model('Organizer', OrganizerSchema);

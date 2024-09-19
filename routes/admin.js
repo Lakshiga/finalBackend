@@ -1,22 +1,66 @@
 const express = require('express');
 const router = express.Router();
-const { getAllOrganizers, verifyOrganizer, getAllUmpires, getAllMatches, getMatchPerformance } = require('/home/uki-admin02/Documents/Lachchu/Match Lachchu final/Match Lachchu/Match /Backend/controllers/adminController.js');
+const User = require('../models/User');
+const Match = require('../models/Match');
 const authMiddleware = require('../middleware/authMiddleware');
 const roleAuth = require('../middleware/roleAuth');
 
-// Admin routes
-router.get('/organizers', authMiddleware, async (req, res) => {
-    try {
-      const organizers = await Organizer.find(); // Fetch all organizers from the database
-      res.json(organizers); // Send the list of organizers back
-    } catch (err) {
-      console.error(err.message);
-      res.status(500).send('Server Error');
+// Admin Route: Get all unverified organizers
+router.get('/unverified-organizers', authMiddleware, roleAuth('admin'), async (req, res) => {
+  try {
+    const organizers = await User.find({ role: 'organizer', verified: false });
+    res.status(200).json(organizers);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ message: 'Error fetching unverified organizers', error: err.message });
+  }
+});
+
+// Admin Route: Verify an organizer
+router.put('/organizers/:id/verify', authMiddleware, roleAuth('admin'), async (req, res) => {
+  try {
+    const organizer = await User.findById(req.params.id);
+    if (!organizer || organizer.role !== 'organizer') {
+      return res.status(404).json({ message: 'Organizer not found' });
     }
-  });
-router.put('/organizers/:id/verify', authMiddleware, roleAuth('admin'), verifyOrganizer);
-router.get('/umpires', authMiddleware, roleAuth('admin'), getAllUmpires);
-router.get('/matches', authMiddleware, roleAuth('admin'), getAllMatches);
-router.get('/performance', authMiddleware, roleAuth('admin'), getMatchPerformance);
+
+    organizer.verified = true;
+    await organizer.save();
+    res.status(200).json({ message: 'Organizer verified successfully' });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ message: 'Error verifying organizer', error: err.message });
+  }
+});
+
+// Admin Route: Get all matches
+router.get('/matches', authMiddleware, roleAuth('admin'), async (req, res) => {
+  try {
+    const matches = await Match.find();
+    res.status(200).json(matches);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ message: 'Error fetching matches', error: err.message });
+  }
+});
+
+// Admin Route: Get performance data (Add your performance logic)
+router.get('/performance', authMiddleware, roleAuth('admin'), async (req, res) => {
+  try {
+    // Example performance data logic
+    // Replace with actual logic for performance data
+    const performanceData = {
+      totalMatches: await Match.countDocuments(),
+      totalOrganizers: await User.countDocuments({ role: 'organizer' }),
+      totalUmpires: await User.countDocuments({ role: 'umpire' }),
+      // Add more performance-related data here
+    };
+
+    res.status(200).json(performanceData);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ message: 'Error fetching performance data', error: err.message });
+  }
+});
 
 module.exports = router;
