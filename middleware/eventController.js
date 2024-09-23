@@ -1,8 +1,8 @@
-const Event = require('../models/Event');
-const Match = require('../models/Match');
-const drawMatches = require('../utils/matchDrawing');
+import Event from '../models/Event.js';
+import Match from '../models/Match.js';
+import drawMatches from '../utils/matchDrawing.js';
 
-exports.createEvent = async (req, res) => {
+export const createEvent = async (req, res) => {
   const { name, matchType, players, umpires } = req.body;
 
   try {
@@ -18,7 +18,7 @@ exports.createEvent = async (req, res) => {
 
     // Drawing matches
     const matches = drawMatches(matchType, players, umpires, event._id);
-    event.matches = matches.map(match => match._id);
+    event.matches = matches.map((match) => match._id);
 
     await event.save();
     await Match.insertMany(matches);

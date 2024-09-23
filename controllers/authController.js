@@ -1,10 +1,11 @@
-const express = require('express');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const { check, validationResult } = require('express-validator');
-const User = require('../models/User');
-require('dotenv').config();
+import express from 'express';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { check, validationResult } from 'express-validator';
+import dotenv from 'dotenv';
+import User from '../models/User.js';
 
+dotenv.config();
 const router = express.Router();
 
 // @route   POST /api/users/register
@@ -37,7 +38,7 @@ router.post(
         name,
         email,
         password,
-        role
+        role,
       });
 
       // Encrypt password
@@ -50,7 +51,7 @@ router.post(
       const payload = {
         user: {
           id: user.id,
-          role: user.role
+          role: user.role,
         },
       };
 
@@ -102,7 +103,7 @@ router.post(
       const payload = {
         user: {
           id: user.id,
-          role: user.role
+          role: user.role,
         },
       };
 
@@ -122,4 +123,4 @@ router.post(
   }
 );
 
-module.exports = router;
+export default router;

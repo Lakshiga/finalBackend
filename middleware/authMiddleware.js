@@ -1,42 +1,45 @@
-const jwt = require('jsonwebtoken');
-const config = require('config');
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
 
-module.exports = function (req, res, next) {
-  // Get token from header
+dotenv.config(); // Load environment variables
+
+// Middleware to verify the token
+const verifyToken = (req, res, next) => {
   const authHeader = req.header('Authorization');
 
+  // Debugging: Log the Authorization header
   console.log('Authorization Header:', authHeader);
 
-  // Check if no token
   if (!authHeader) {
     return res.status(401).json({ msg: 'No token, authorization denied' });
   }
 
-  // Extract token from header
-  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : null;
+  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : authHeader;
 
+  // Debugging: Log the extracted token
   console.log('Extracted Token:', token);
 
-  // Check if token doesn't exist
   if (!token) {
     return res.status(401).json({ msg: 'No token, authorization denied' });
   }
 
   try {
-    // Verify the token
-    const decoded = jwt.verify(token, config.get('jwtSecret'));
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     console.log('Decoded Token:', decoded);
-
-    // Check if the user role is admin
-    if (decoded.user.role !== 'admin') {
-      return res.status(403).json({ msg: 'Access denied' });
-    }
-
-    // Attach the decoded user to the request
     req.user = decoded.user;
     next();
   } catch (err) {
     console.error('Token verification failed:', err.message);
-    res.status(401).json({ msg: 'Token is not valid' });
+    return res.status(401).json({ msg: 'Token is not valid' });
   }
 };
+
+// Middleware to check if the user is an admin
+const isAdmin = (req, res, next) => {
+  if (!req.user || req.user.role !== 'admin') {
+    return res.status(403).json({ msg: 'Access denied. Admins only' });
+  }
+  next(); // Proceed if the user is an admin
+};
+
+export { verifyToken, isAdmin }; // Export both functions

@@ -1,9 +1,8 @@
-const Match = require('../models/Match');
-const User = require('../models/User'); // Assuming User model is used for umpires
-const Umpire = require('../models/Umpire');
+import Match from '../models/Match.js';
+import User from '../models/User.js'; // Assuming User model is used for umpires
 
 // Create a new match
-exports.createMatch = async (req, res) => {
+export const createMatch = async (req, res) => {
   try {
     const match = new Match({
       ...req.body,
@@ -18,7 +17,7 @@ exports.createMatch = async (req, res) => {
 };
 
 // Update an existing match
-exports.updateMatch = async (req, res) => {
+export const updateMatch = async (req, res) => {
   try {
     const match = await Match.findById(req.params.id);
     if (!match) {
@@ -37,7 +36,7 @@ exports.updateMatch = async (req, res) => {
 };
 
 // Delete a match
-exports.deleteMatch = async (req, res) => {
+export const deleteMatch = async (req, res) => {
   try {
     const match = await Match.findById(req.params.id);
     if (!match) {
@@ -55,7 +54,7 @@ exports.deleteMatch = async (req, res) => {
 };
 
 // Verify an umpire
-exports.verifyUmpire = async (req, res) => {
+export const verifyUmpire = async (req, res) => {
   try {
     const umpire = await User.findById(req.params.id);
     if (!umpire) {
@@ -71,7 +70,7 @@ exports.verifyUmpire = async (req, res) => {
 };
 
 // Get matches by organizer
-exports.getMatchesByOrganizer = async (req, res) => {
+export const getMatchesByOrganizer = async (req, res) => {
   try {
     const matches = await Match.find({ organizer: req.user.id });
     res.json(matches);

@@ -1,7 +1,8 @@
-const express = require('express');
-const auth = require('../middleware/authMiddleware');
-const checkRole = require('../middleware/checkRole');
-const Event = require('../models/Event');
+import express from 'express';
+import { verifyToken as auth } from '../middleware/authMiddleware.js';
+import { checkRole } from '../middleware/checkRole.js';
+import Event from '../models/Event.js';
+
 const router = express.Router();
 
 // Create event (Organizer only)
@@ -92,4 +93,4 @@ router.get('/events', auth, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

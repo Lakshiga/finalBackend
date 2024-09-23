@@ -1,7 +1,10 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
-const Admin = require('../models/AdminModel'); // Adjust the path as needed
-require('dotenv').config(); // To load environment variables
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
+import dotenv from 'dotenv';
+import Admin from '../models/AdminModel.js'; // Adjust the path as needed
+
+// Load environment variables
+dotenv.config();
 
 // Function to create the default admin
 const createDefaultAdmin = async () => {
@@ -36,7 +39,7 @@ const createDefaultAdmin = async () => {
     }
 
     // Disconnect from the database after completion
-    mongoose.disconnect();
+    await mongoose.disconnect();
   } catch (error) {
     console.error('Error creating default admin:', error);
   }

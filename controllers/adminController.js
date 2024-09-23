@@ -1,9 +1,9 @@
-const Organizer = require('../models/Organizer');
-const Umpire = require('../models/Umpire');
-const Match = require('../models/Match');
+import Organizer from '../models/Organizer.js';
+import Umpire from '../models/Umpire.js';
+import Match from '../models/Match.js';
 
 // Admin can view all organizers
-exports.getAllOrganizers = async (req, res) => {
+export const getAllOrganizers = async (req, res) => {
   try {
     const organizers = await Organizer.find();
     res.json(organizers);
@@ -14,7 +14,7 @@ exports.getAllOrganizers = async (req, res) => {
 };
 
 // Admin can verify an organizer's registration
-exports.verifyOrganizer = async (req, res) => {
+export const verifyOrganizer = async (req, res) => {
   try {
     const organizer = await Organizer.findById(req.params.id);
     if (!organizer) {
@@ -30,7 +30,7 @@ exports.verifyOrganizer = async (req, res) => {
 };
 
 // Admin can view all umpires
-exports.getAllUmpires = async (req, res) => {
+export const getAllUmpires = async (req, res) => {
   try {
     const umpires = await Umpire.find();
     res.json(umpires);
@@ -41,7 +41,7 @@ exports.getAllUmpires = async (req, res) => {
 };
 
 // Admin can view all matches
-exports.getAllMatches = async (req, res) => {
+export const getAllMatches = async (req, res) => {
   try {
     const matches = await Match.find();
     res.json(matches);
@@ -52,7 +52,7 @@ exports.getAllMatches = async (req, res) => {
 };
 
 // Admin can view overall match performance (e.g., statistics)
-exports.getMatchPerformance = async (req, res) => {
+export const getMatchPerformance = async (req, res) => {
   try {
     // Example query to get match performance data
     const matches = await Match.aggregate([

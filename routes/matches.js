@@ -1,7 +1,8 @@
-const express = require('express');
-const auth = require('../middleware/authMiddleware');
-const checkRole = require('../middleware/checkRole');
-const Match = require('../models/Match');
+import express from 'express';
+import { verifyToken as auth } from '../middleware/authMiddleware.js';
+import { checkRole } from '../middleware/checkRole.js';
+import Match from '../models/Match.js';
+
 const router = express.Router();
 
 // Create match (Organizer only)
@@ -103,4 +104,4 @@ router.get('/matches/finished', auth, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

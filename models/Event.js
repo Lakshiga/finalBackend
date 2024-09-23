@@ -1,14 +1,15 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+import mongoose from 'mongoose';
+
+const { Schema } = mongoose;
 
 const EventSchema = new Schema({
   name: { type: String, required: true },
-  organizer: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  organizer: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   matchType: { type: String, enum: ['League', 'Knockout'], required: true },
   players: [{ type: String, required: true }],
   umpires: [{ type: String, required: true }],
-  matches: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Match' }],
+  matches: [{ type: Schema.Types.ObjectId, ref: 'Match' }],
   createdAt: { type: Date, default: Date.now },
 });
 
-module.exports = mongoose.model('Event', EventSchema);
+export default mongoose.model('Event', EventSchema);

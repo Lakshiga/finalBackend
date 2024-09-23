@@ -1,6 +1,8 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
-const umpireSchema = new mongoose.Schema({
+const { Schema } = mongoose;
+
+const umpireSchema = new Schema({
     name: {
         type: String,
         required: true,
@@ -35,4 +37,5 @@ const umpireSchema = new mongoose.Schema({
     },
 });
 
-module.exports = mongoose.model('Umpire', umpireSchema);
+const Umpire = mongoose.model('Umpire', umpireSchema);
+export default Umpire; // Use default export

@@ -1,14 +1,15 @@
-const express = require('express');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const path = require('path');
-const connectDB = require('./config/db'); // Importing the db connection
-const userRoutes = require('./routes/auth'); // Importing user authentication routes
-const matchRoutes = require('./routes/matches'); // Importing match-related routes
-const eventRoutes = require('./routes/events'); // Importing event routes
-const adminRoutes = require('./routes/admin'); // Importing admin routes
-const organizerRoutes = require('./routes/organizer'); // Importing organizer routes
-const umpireRoutes = require('./routes/umpire'); // Importing umpire routes
+import express from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import connectDB from './config/db.js'; // Importing the db connection
+import userRoutes from './routes/users.js'; // Importing user authentication routes
+import matchRoutes from './routes/matches.js'; // Importing match-related routes
+import eventRoutes from './routes/events.js'; // Importing event routes
+import adminRoutes from './routes/admin.js'; // Importing admin routes
+import organizerRoutes from './routes/organizer.js'; // Importing organizer routes
+import umpireRoutes from './routes/umpire.js'; // Importing umpire routes
 
 const app = express();
 
@@ -31,6 +32,7 @@ app.use('/api/umpire', umpireRoutes); // API route for umpire-related operations
 // Serve static assets in production
 if (process.env.NODE_ENV === 'production') {
   // Set static folder
+  const __dirname = path.dirname(fileURLToPath(import.meta.url));
   app.use(express.static(path.join(__dirname, 'client/build')));
 
   app.get('*', (req, res) => {

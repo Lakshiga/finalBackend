@@ -1,8 +1,9 @@
-const express = require('express');
+import express from 'express';
+import Match from '../models/Match.js'; // Assuming you have a Match model
+import { verifyToken as authMiddleware } from '../middleware/authMiddleware.js';
+import { roleAuth } from '../middleware/roleAuth.js';
+
 const router = express.Router();
-const Match = require('../models/Match'); // Assuming you have a Match model
-const authMiddleware = require('../middleware/authMiddleware');
-const roleAuth = require('../middleware/roleAuth');
 
 // Route for umpire to update match scores
 router.put('/:matchId/score', authMiddleware, roleAuth('umpire'), async (req, res) => {
@@ -43,4 +44,4 @@ router.get('/matches', authMiddleware, roleAuth('umpire'), async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

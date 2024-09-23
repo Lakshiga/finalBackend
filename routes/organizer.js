@@ -1,9 +1,10 @@
-const express = require('express');
+import express from 'express';
+import Match from '../models/Match.js';
+import Umpire from '../models/Umpire.js';
+import { verifyToken as authMiddleware } from '../middleware/authMiddleware.js';
+import { roleAuth } from '../middleware/roleAuth.js';
+
 const router = express.Router();
-const Match = require('../models/Match');
-const Umpire = require('../models/Umpire');
-const authMiddleware = require('../middleware/authMiddleware');
-const roleAuth = require('../middleware/roleAuth');
 
 // Middleware to ensure the user is authenticated and has the 'organizer' role
 router.use(authMiddleware);
@@ -57,10 +58,10 @@ router.get('/matches', async (req, res) => {
     }
 });
 
-// Get all umpires who need verification
-router.get('/umpire-verifications', async (req, res) => {
+// Get all unverified umpires
+router.get('/unverified-umpires', async (req, res) => {
     try {
-        const umpires = await Umpire.find({ verificationStatus: 'Pending' });
+        const umpires = await User.find({ role: 'umpire', verificationStatus: 'Pending' });
         res.status(200).json(umpires);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching unverified umpires', error });
@@ -71,7 +72,7 @@ router.get('/umpire-verifications', async (req, res) => {
 router.post('/verify-umpire/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        const umpire = await Umpire.findById(id);
+        const umpire = await User.findOne({ _id: id, role: 'umpire' });
         if (!umpire) {
             return res.status(404).json({ message: 'Umpire not found' });
         }
@@ -84,4 +85,31 @@ router.post('/verify-umpire/:id', async (req, res) => {
     }
 });
 
-module.exports = router;
+// Get all unverified players
+router.get('/unverified-players', async (req, res) => {
+    try {
+        const players = await User.find({ role: 'player', verificationStatus: 'Pending' });
+        res.status(200).json(players);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching unverified players', error });
+    }
+});
+
+// Verify a player
+router.post('/verify-player/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const player = await User.findOne({ _id: id, role: 'player' });
+        if (!player) {
+            return res.status(404).json({ message: 'Player not found' });
+        }
+
+        player.verificationStatus = 'Verified';
+        await player.save();
+        res.status(200).json({ message: 'Player verified successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error verifying player', error });
+    }
+});
+
+export default router;
