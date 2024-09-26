@@ -1,11 +1,29 @@
 import express from 'express';
 import Match from '../models/Match.js';
-import Umpire from '../models/Umpire.js';
+import Umpire from '../models/Umpire.js'; // Fix: Changed from 'umpires' to 'Umpire'
 import { verifyToken as authMiddleware } from '../middleware/authMiddleware.js';
 import { roleAuth } from '../middleware/roleAuth.js';
 
 const router = express.Router();
 
+
+router.get('/organizer/status', authMiddleware, async (req, res) => {
+    try {
+      // Assuming the token payload contains the user's ID
+      const organizerId = req.user.id; 
+      const organizer = await User.findById(organizerId);
+  
+      if (!organizer) {
+        return res.status(404).json({ msg: 'Organizer not found' });
+      }
+  
+      // Respond with verification status
+      res.json({ verified: organizer.verified });
+    } catch (error) {
+      console.error('Error fetching organizer status:', error);
+      res.status(500).json({ msg: 'Internal server error' });
+    }
+  });
 // Middleware to ensure the user is authenticated and has the 'organizer' role
 router.use(authMiddleware);
 router.use(roleAuth('organizer'));
@@ -61,7 +79,7 @@ router.get('/matches', async (req, res) => {
 // Get all unverified umpires
 router.get('/unverified-umpires', async (req, res) => {
     try {
-        const umpires = await User.find({ role: 'umpire', verificationStatus: 'Pending' });
+        const umpires = await Umpire.find({ verificationStatus: 'Pending' }); // Use Umpire model instead of User
         res.status(200).json(umpires);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching unverified umpires', error });
@@ -72,7 +90,7 @@ router.get('/unverified-umpires', async (req, res) => {
 router.post('/verify-umpire/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        const umpire = await User.findOne({ _id: id, role: 'umpire' });
+        const umpire = await Umpire.findById(id); // Use Umpire model instead of User
         if (!umpire) {
             return res.status(404).json({ message: 'Umpire not found' });
         }

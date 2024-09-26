@@ -67,6 +67,9 @@ router.post(
 // @route   POST /api/users/login
 // @desc    Login a user
 // @access  Public
+// @route   POST /api/users/login
+// @desc    Login a user
+// @access  Public
 router.post(
   '/login',
   [
@@ -107,16 +110,23 @@ router.post(
         return res.status(400).json({ msg: 'Invalid Credentials' });
       }
 
-      // If the user is an organizer, check if they are verified
-      if (user.role === 'Organizer' && !user.isVerified) {
-        return res.status(403).json({ msg: 'Organizer not verified by admin yet' });
+      // Check if the user is an organizer and verified
+      if (user.role === 'Organizer' && !user.verified) {
+        // If not verified, send this specific response
+        return res.status(200).json({
+          token: null,
+          role: 'organizer',
+          isVerified: false,
+          msg: 'Waiting for admin verification.',
+        });
       }
 
-      // Token generation
+      // If verified or other role
       const payload = {
         user: {
           id: user.id,
           role: user.role,
+          isVerified: user.verified,
         },
       };
 
@@ -126,7 +136,12 @@ router.post(
         { expiresIn: '5h' },
         (err, token) => {
           if (err) throw err;
-          res.json({ token, role: user.role, msg: 'Login successful' });
+          res.json({
+            token,
+            role: user.role,
+            isVerified: user.verified,
+            msg: 'Login successful',
+          });
         }
       );
     } catch (err) {
@@ -136,13 +151,14 @@ router.post(
   }
 );
 
+
 // @route   GET /api/users/AllUser
 // @desc    Fetch all users (Admin only), filter unverified organizers
 // @access  Private/Admin
 router.get('/AllUser', verifyToken, isAdmin, async (req, res) => {
   try {
     const users = await User.find();
-    const unverifiedOrganizers = users.filter(user => user.role === 'Organizer' && !user.isVerified);
+    const unverifiedOrganizers = users.filter(user => user.role === 'Organizer' && !user.verified);
     res.status(200).json({ users, unverifiedOrganizers });
   } catch (err) {
     console.error('Error fetching users:', err.message);
@@ -161,7 +177,7 @@ router.put('/AllUser/:id/verify', verifyToken, isAdmin, async (req, res) => {
       return res.status(404).json({ message: 'Organizer not found or not valid' });
     }
 
-    user.isVerified = true;
+    user.verified = true;
     await user.save();
 
     res.status(200).json({ message: 'Organizer verified successfully' });
@@ -170,5 +186,5 @@ router.put('/AllUser/:id/verify', verifyToken, isAdmin, async (req, res) => {
     res.status(500).json({ message: 'Failed to verify organizer' });
   }
 });
-
 export default router;
+
