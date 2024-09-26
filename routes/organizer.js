@@ -3,6 +3,7 @@ import Match from '../models/Match.js';
 import Umpire from '../models/Umpire.js'; // Fix: Changed from 'umpires' to 'Umpire'
 import { verifyToken as authMiddleware } from '../middleware/authMiddleware.js';
 import { roleAuth } from '../middleware/roleAuth.js';
+import User from '../models/User.js';
 
 const router = express.Router();
 
