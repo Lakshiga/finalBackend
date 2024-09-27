@@ -27,7 +27,7 @@ router.get('/organizer/status', authMiddleware, async (req, res) => {
   });
 // Middleware to ensure the user is authenticated and has the 'organizer' role
 router.use(authMiddleware);
-router.use(roleAuth('organizer'));
+router.use(roleAuth('Organizer'));
 
 // Create a new match
 router.post('/matches', async (req, res) => {
@@ -80,7 +80,7 @@ router.get('/matches', async (req, res) => {
 // Get all unverified umpires
 router.get('/unverified-umpires', async (req, res) => {
     try {
-        const umpires = await Umpire.find({ verificationStatus: 'Pending' }); // Use Umpire model instead of User
+        const umpires = await User.find({ role:"Umpire",verified:false }); // Use Umpire model instead of User
         res.status(200).json(umpires);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching unverified umpires', error });
@@ -91,7 +91,7 @@ router.get('/unverified-umpires', async (req, res) => {
 router.post('/verify-umpire/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        const umpire = await Umpire.findById(id); // Use Umpire model instead of User
+        const umpire = await User.findById(id); // Use Umpire model instead of User
         if (!umpire) {
             return res.status(404).json({ message: 'Umpire not found' });
         }
@@ -107,7 +107,7 @@ router.post('/verify-umpire/:id', async (req, res) => {
 // Get all unverified players
 router.get('/unverified-players', async (req, res) => {
     try {
-        const players = await User.find({ role: 'player', verificationStatus: 'Pending' });
+        const players = await User.find({ role: 'player',verified:false});
         res.status(200).json(players);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching unverified players', error });
