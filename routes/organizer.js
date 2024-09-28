@@ -8,7 +8,7 @@ import User from '../models/User.js';
 const router = express.Router();
 
 
-router.get('/organizer/status', authMiddleware, async (req, res) => {
+router.get('/status', authMiddleware, async (req, res) => {
     try {
       // Assuming the token payload contains the user's ID
       const organizerId = req.user.id; 
@@ -107,7 +107,7 @@ router.post('/verify-umpire/:id', async (req, res) => {
 // Get all unverified players
 router.get('/unverified-players', async (req, res) => {
     try {
-        const players = await User.find({ role: 'player',verified:false});
+        const players = await User.find({ role:"Player",verified:false});
         res.status(200).json(players);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching unverified players', error });
@@ -118,7 +118,7 @@ router.get('/unverified-players', async (req, res) => {
 router.post('/verify-player/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        const player = await User.findOne({ _id: id, role: 'player' });
+        const player = await User.find({ _id: id, role: 'Player' });
         if (!player) {
             return res.status(404).json({ message: 'Player not found' });
         }
